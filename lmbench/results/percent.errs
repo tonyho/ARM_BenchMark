@@ -1,0 +1,3 @@
+Name "main::files" used only once: possible typo at ../scripts/getpercent line 14.
+Name "main::lat_tlb" used only once: possible typo at ../scripts/getpercent line 157.
+Name "main::bw_file" used only once: possible typo at ../scripts/getpercent line 91.
