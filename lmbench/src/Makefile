@@ -40,6 +40,8 @@ MAKE=`../scripts/make`
 AR=ar
 ARCREATE=cr
 
+EXFLAGS=-static -march=armv7-a -mfpu=neon -mfloat-abi=softfp 
+
 # base of installation location
 BASE=/usr/local
 O= ../bin/unknown
@@ -59,7 +61,7 @@ SAMPLES=lmbench/Results/aix/rs6000 lmbench/Results/hpux/snake \
 	lmbench/Results/irix/indigo2 lmbench/Results/linux/pentium \
 	lmbench/Results/osf1/alpha lmbench/Results/solaris/ss20* 
 
-COMPILE=$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS)
+COMPILE=$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) ${EXFLAGS}
 
 INCS =	bench.h lib_mem.h lib_tcp.h lib_udp.h stats.h timing.h
 
@@ -165,10 +167,10 @@ $(ASMS):
 	$(CC) -S $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o $@ `basename $@ .s`.c
 
 Wall:
-	@env CFLAGS="-g -O -Wall -march=armv7-a -mfpu=neon -mfloat-abi=softfp " MAKE="$(MAKE)" MAKEFLAGS="$(MAKEFLAGS)" CC="${CC}" OS="${OS}" ../scripts/build all opt
+	@env CFLAGS="-g -O -Wall -static -march=armv7-a -mfpu=neon -mfloat-abi=softfp " MAKE="$(MAKE)" MAKEFLAGS="$(MAKEFLAGS)" CC="${CC}" OS="${OS}" ../scripts/build all opt
 
 debug:
-	@env CFLAGS="-g -O -DDEBUG -march=armv7-a -mfpu=neon -mfloat-abi=softfp " MAKE="$(MAKE)" MAKEFLAGS="$(MAKEFLAGS)" CC="${CC}" OS="${OS}" ../scripts/build all opt
+	@env CFLAGS="-g -O -DDEBUG --static march=armv7-a -mfpu=neon -mfloat-abi=softfp " MAKE="$(MAKE)" MAKEFLAGS="$(MAKEFLAGS)" CC="${CC}" OS="${OS}" ../scripts/build all opt
 
 assembler:
 	@env CFLAGS=-O MAKE="$(MAKE)" MAKEFLAGS="$(MAKEFLAGS)" CC="${CC}" OS="${OS}" ../scripts/build asm
@@ -228,23 +230,23 @@ $O/lmbench.a: $(LIBOBJS)
 	-ranlib $O/lmbench.a
 
 $O/lib_timing.o : lib_timing.c $(INCS)
-	$(COMPILE) -c lib_timing.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp -o $O/lib_timing.o
+	$(COMPILE) -c lib_timing.c  -o $O/lib_timing.o
 $O/lib_mem.o : lib_mem.c $(INCS)
-	$(COMPILE) -c lib_mem.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp -o $O/lib_mem.o
+	$(COMPILE) -c lib_mem.c  -o $O/lib_mem.o
 $O/lib_tcp.o : lib_tcp.c $(INCS)
-	$(COMPILE) -c lib_tcp.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp -o $O/lib_tcp.o
+	$(COMPILE) -c lib_tcp.c  -o $O/lib_tcp.o
 $O/lib_udp.o : lib_udp.c $(INCS)
-	$(COMPILE) -c lib_udp.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp -o $O/lib_udp.o
+	$(COMPILE) -c lib_udp.c  -o $O/lib_udp.o
 $O/lib_unix.o : lib_unix.c $(INCS)
-	$(COMPILE) -c lib_unix.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp -o $O/lib_unix.o
+	$(COMPILE) -c lib_unix.c  -o $O/lib_unix.o
 $O/lib_debug.o : lib_debug.c $(INCS)
-	$(COMPILE) -c lib_debug.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp -o $O/lib_debug.o
+	$(COMPILE) -c lib_debug.c  -o $O/lib_debug.o
 $O/lib_stats.o : lib_stats.c $(INCS)
-	$(COMPILE) -c lib_stats.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp -o $O/lib_stats.o
+	$(COMPILE) -c lib_stats.c  -o $O/lib_stats.o
 $O/lib_sched.o : lib_sched.c $(INCS)
-	$(COMPILE) -c lib_sched.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp -o $O/lib_sched.o
+	$(COMPILE) -c lib_sched.c  -o $O/lib_sched.o
 $O/getopt.o : getopt.c $(INCS)
-	$(COMPILE) -c getopt.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp -o $O/getopt.o
+	$(COMPILE) -c getopt.c  -o $O/getopt.o
 
 $(UTILS) :
 	-cd ../scripts; make get
@@ -253,262 +255,262 @@ $(UTILS) :
 # MAKEDEPEND follows
 $O/rhttp.s:rhttp.c timing.h stats.h bench.h 
 $O/rhttp:  rhttp.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/rhttp rhttp.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/rhttp rhttp.c  $O/lmbench.a $(LDLIBS)
 
 $O/http.s:http.c timing.h stats.h bench.h 
 $O/http:  http.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/http http.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/http http.c  $O/lmbench.a $(LDLIBS)
 
 $O/flushdisk.s:flushdisk.c 
 $O/flushdisk:  flushdisk.c 
-	$(COMPILE) -DMAIN -o $O/flushdisk flushdisk.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp 
+	$(COMPILE) -DMAIN -o $O/flushdisk flushdisk.c  
 
 $O/mhz.s: mhz.c timing.h stats.h bench.h
 $O/mhz: mhz.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/mhz mhz.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS) -lm
+	$(COMPILE) -o $O/mhz mhz.c  $O/lmbench.a $(LDLIBS) -lm
 
 $O/lat_ctx.s: lat_ctx.c timing.h stats.h bench.h
 $O/lat_ctx: lat_ctx.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_ctx lat_ctx.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_ctx lat_ctx.c  $O/lmbench.a $(LDLIBS)
 
 $O/lmhttp.s:lmhttp.c timing.h stats.h bench.h
 $O/lmhttp:  lmhttp.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lmhttp lmhttp.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lmhttp lmhttp.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_http.s:lat_http.c timing.h stats.h bench.h
 $O/lat_http:  lat_http.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_http lat_http.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_http lat_http.c  $O/lmbench.a $(LDLIBS)
 
 $O/bw_file_rd.s:bw_file_rd.c timing.h stats.h bench.h
 $O/bw_file_rd:  bw_file_rd.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/bw_file_rd bw_file_rd.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/bw_file_rd bw_file_rd.c  $O/lmbench.a $(LDLIBS)
 
 $O/bw_mem.s:bw_mem.c timing.h stats.h bench.h
 $O/bw_mem:  bw_mem.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/bw_mem bw_mem.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/bw_mem bw_mem.c  $O/lmbench.a $(LDLIBS)
 
 $O/bw_mmap_rd.s:bw_mmap_rd.c timing.h stats.h bench.h
 $O/bw_mmap_rd:  bw_mmap_rd.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/bw_mmap_rd bw_mmap_rd.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/bw_mmap_rd bw_mmap_rd.c  $O/lmbench.a $(LDLIBS)
 
 $O/bw_pipe.s:bw_pipe.c timing.h stats.h bench.h
 $O/bw_pipe:  bw_pipe.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/bw_pipe bw_pipe.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/bw_pipe bw_pipe.c  $O/lmbench.a $(LDLIBS)
 
 $O/bw_tcp.s:bw_tcp.c bench.h timing.h stats.h lib_tcp.h
 $O/bw_tcp:  bw_tcp.c bench.h timing.h stats.h lib_tcp.h $O/lmbench.a
-	$(COMPILE) -o $O/bw_tcp bw_tcp.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/bw_tcp bw_tcp.c  $O/lmbench.a $(LDLIBS)
 
 $O/bw_udp.s:bw_udp.c bench.h timing.h stats.h lib_udp.h
 $O/bw_udp:  bw_udp.c bench.h timing.h stats.h lib_udp.h $O/lmbench.a
-	$(COMPILE) -o $O/bw_udp bw_udp.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/bw_udp bw_udp.c  $O/lmbench.a $(LDLIBS)
 
 $O/bw_unix.s:bw_unix.c timing.h stats.h bench.h
 $O/bw_unix:  bw_unix.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/bw_unix bw_unix.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/bw_unix bw_unix.c  $O/lmbench.a $(LDLIBS)
 
 $O/disk.s:disk.c flushdisk.c bench.h timing.h stats.h lib_tcp.h
 $O/disk:  disk.c flushdisk.c bench.h timing.h stats.h lib_tcp.h $O/lmbench.a
-	$(COMPILE) -o $O/disk disk.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/disk disk.c  $O/lmbench.a $(LDLIBS)
 
 $O/clock.s:clock.c timing.h stats.h bench.h
 $O/clock:  clock.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/clock clock.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/clock clock.c  $O/lmbench.a $(LDLIBS)
 
 $O/hello.s:hello.c
 $O/hello:  hello.c $O/lmbench.a
-	$(COMPILE) -o $O/hello hello.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/hello hello.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_alarm.s:lat_alarm.c timing.h stats.h bench.h
 $O/lat_alarm:  lat_alarm.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_alarm lat_alarm.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_alarm lat_alarm.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_connect.s:lat_connect.c lib_tcp.c bench.h lib_tcp.h timing.h stats.h
 $O/lat_connect:  lat_connect.c lib_tcp.c bench.h lib_tcp.h timing.h stats.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_connect lat_connect.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_connect lat_connect.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_unix_connect.s:lat_unix_connect.c lib_tcp.c bench.h lib_tcp.h timing.h stats.h
 $O/lat_unix_connect:  lat_unix_connect.c lib_tcp.c bench.h lib_tcp.h timing.h stats.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_unix_connect lat_unix_connect.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_unix_connect lat_unix_connect.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_fs.s:lat_fs.c timing.h stats.h bench.h
 $O/lat_fs:  lat_fs.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_fs lat_fs.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_fs lat_fs.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_fs_open_close:  lat_fs_open_close.c timing.h stats.h bench.h \
 	$O/lmbench.a
-	$(COMPILE) -o $O/lat_fs_open_close lat_fs_open_close.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_fs_open_close lat_fs_open_close.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_fs_create_unlink:  lat_fs_create_unlink.c timing.h stats.h bench.h \
 	$O/lmbench.a
-	$(COMPILE) -o $O/lat_fs_create_unlink lat_fs_create_unlink.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_fs_create_unlink lat_fs_create_unlink.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_fs_chown:  lat_fs_chown.c timing.h stats.h bench.h \
 	$O/lmbench.a
-	$(COMPILE) -o $O/lat_fs_chown lat_fs_chown.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_fs_chown lat_fs_chown.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_fs_write_truncate:  lat_fs_write_truncate.c timing.h stats.h bench.h \
 	$O/lmbench.a
-	$(COMPILE) -o $O/lat_fs_write_truncate lat_fs_write_truncate.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_fs_write_truncate lat_fs_write_truncate.c  $O/lmbench.a $(LDLIBS)
 
 
 $O/lat_fcntl.s:lat_fcntl.c timing.h stats.h bench.h
 $O/lat_fcntl:  lat_fcntl.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_fcntl lat_fcntl.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_fcntl lat_fcntl.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_mem_rd.s:lat_mem_rd.c timing.h stats.h bench.h
 $O/lat_mem_rd:  lat_mem_rd.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_mem_rd lat_mem_rd.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_mem_rd lat_mem_rd.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_mem_rd2.s:lat_mem_rd2.c timing.h stats.h bench.h
 $O/lat_mem_rd2:  lat_mem_rd2.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_mem_rd2 lat_mem_rd2.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_mem_rd2 lat_mem_rd2.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_mem_wr.s:lat_mem_wr.c timing.h stats.h bench.h
 $O/lat_mem_wr:  lat_mem_wr.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_mem_wr lat_mem_wr.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_mem_wr lat_mem_wr.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_mem_wr2.s:lat_mem_wr2.c timing.h stats.h bench.h
 $O/lat_mem_wr2:  lat_mem_wr2.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_mem_wr2 lat_mem_wr2.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_mem_wr2 lat_mem_wr2.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_mmap.s:lat_mmap.c timing.h stats.h bench.h
 $O/lat_mmap:  lat_mmap.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_mmap lat_mmap.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_mmap lat_mmap.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_mmaprd.s:lat_mmaprd.c timing.h stats.h bench.h
 $O/lat_mmaprd:  lat_mmaprd.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_mmaprd lat_mmaprd.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_mmaprd lat_mmaprd.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_ops.s:lat_ops.c timing.h stats.h bench.h
 $O/lat_ops:  lat_ops.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_ops lat_ops.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_ops lat_ops.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_pagefault.s:lat_pagefault.c timing.h stats.h bench.h
 $O/lat_pagefault:  lat_pagefault.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_pagefault lat_pagefault.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_pagefault lat_pagefault.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_pipe.s:lat_pipe.c timing.h stats.h bench.h
 $O/lat_pipe:  lat_pipe.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_pipe lat_pipe.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_pipe lat_pipe.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_fifo.s:lat_fifo.c timing.h stats.h bench.h
 $O/lat_fifo:  lat_fifo.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_fifo lat_fifo.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_fifo lat_fifo.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_proc.s:lat_proc.c timing.h stats.h bench.h
 $O/lat_proc:  lat_proc.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_proc lat_proc.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_proc lat_proc.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_rpc.s:lat_rpc.c timing.h stats.h bench.h
 $O/lat_rpc:  lat_rpc.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_rpc lat_rpc.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_rpc lat_rpc.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_sig.s:lat_sig.c timing.h stats.h bench.h
 $O/lat_sig:  lat_sig.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_sig lat_sig.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_sig lat_sig.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_syscall.s:lat_syscall.c timing.h stats.h bench.h
 $O/lat_syscall:  lat_syscall.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_syscall lat_syscall.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_syscall lat_syscall.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_select.s:  lat_select.c timing.h stats.h bench.h
 $O/lat_select:  lat_select.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_select lat_select.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_select lat_select.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_tcp.s:lat_tcp.c timing.h stats.h bench.h lib_tcp.h
 $O/lat_tcp:  lat_tcp.c timing.h stats.h bench.h lib_tcp.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_tcp lat_tcp.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_tcp lat_tcp.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_udp.s:lat_udp.c timing.h stats.h bench.h lib_udp.h
 $O/lat_udp:  lat_udp.c timing.h stats.h bench.h lib_udp.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_udp lat_udp.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_udp lat_udp.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_unix.s:lat_unix.c timing.h stats.h bench.h
 $O/lat_unix:  lat_unix.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_unix lat_unix.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_unix lat_unix.c  $O/lmbench.a $(LDLIBS)
 
 $O/lib_tcp.s:lib_tcp.c bench.h lib_tcp.h
 $O/lib_tcp:  lib_tcp.c bench.h lib_tcp.h $O/lmbench.a
-	$(COMPILE) -o $O/lib_tcp lib_tcp.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lib_tcp lib_tcp.c  $O/lmbench.a $(LDLIBS)
 
 $O/lib_udp.s:lib_udp.c bench.h lib_udp.h
 $O/lib_udp:  lib_udp.c bench.h lib_udp.h $O/lmbench.a
-	$(COMPILE) -o $O/lib_udp lib_udp.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lib_udp lib_udp.c  $O/lmbench.a $(LDLIBS)
 
 $O/lmdd.s:lmdd.c timing.h stats.h bench.h
 $O/lmdd:  lmdd.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lmdd lmdd.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lmdd lmdd.c  $O/lmbench.a $(LDLIBS)
 
 $O/enough.s:enough.c timing.h stats.h bench.h
 $O/enough:  enough.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/enough enough.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/enough enough.c  $O/lmbench.a $(LDLIBS)
 
 $O/loop_o.s:loop_o.c timing.h stats.h bench.h
 $O/loop_o:  loop_o.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/loop_o loop_o.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/loop_o loop_o.c  $O/lmbench.a $(LDLIBS)
 
 $O/timing_o.s:timing_o.c timing.h stats.h bench.h
 $O/timing_o:  timing_o.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/timing_o timing_o.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/timing_o timing_o.c  $O/lmbench.a $(LDLIBS)
 
 $O/memsize.s:memsize.c timing.h stats.h bench.h
 $O/memsize:  memsize.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/memsize memsize.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/memsize memsize.c  $O/lmbench.a $(LDLIBS)
 
 $O/msleep.s:msleep.c timing.h stats.h bench.h
 $O/msleep:  msleep.c timing.h stats.h bench.h 
-	$(COMPILE) -o $O/msleep -march=armv7-a -mfpu=neon -mfloat-abi=softfp msleep.c
+	$(COMPILE) -o $O/msleep  msleep.c
 
 $O/line.s:  line.c timing.h stats.h bench.h
 $O/line:  line.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/line line.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/line line.c  $O/lmbench.a $(LDLIBS)
 
 $O/tlb.s:tlb.c timing.h stats.h bench.h
 $O/tlb:  tlb.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/tlb tlb.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/tlb tlb.c  $O/lmbench.a $(LDLIBS)
 
 $O/cache.s:cache.c timing.h stats.h bench.h
 $O/cache:  cache.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/cache cache.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/cache cache.c  $O/lmbench.a $(LDLIBS)
 
 $O/par_mem.s:par_mem.c timing.h stats.h bench.h
 $O/par_mem:  par_mem.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/par_mem par_mem.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/par_mem par_mem.c  $O/lmbench.a $(LDLIBS)
 
 $O/par_ops.s:par_ops.c timing.h stats.h bench.h
 $O/par_ops:  par_ops.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/par_ops par_ops.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/par_ops par_ops.c  $O/lmbench.a $(LDLIBS)
 
 $O/stream.s:stream.c timing.h stats.h bench.h
 $O/stream:  stream.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/stream stream.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/stream stream.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_sem.s:lat_sem.c timing.h stats.h bench.h
 $O/lat_sem:  lat_sem.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_sem lat_sem.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_sem lat_sem.c  $O/lmbench.a $(LDLIBS)
 
 $O/par_list.s:par_list.c timing.h stats.h bench.h
 $O/par_list:  par_list.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/par_list par_list.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/par_list par_list.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_dram_page.s:lat_dram_page.c timing.h stats.h bench.h
 $O/lat_dram_page:  lat_dram_page.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_dram_page lat_dram_page.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_dram_page lat_dram_page.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_usleep.s:lat_usleep.c timing.h stats.h bench.h
 $O/lat_usleep:  lat_usleep.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_usleep lat_usleep.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_usleep lat_usleep.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_pmake.s:lat_pmake.c timing.h stats.h bench.h
 $O/lat_pmake:  lat_pmake.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_pmake lat_pmake.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_pmake lat_pmake.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_rand.s:lat_rand.c timing.h stats.h bench.h
 $O/lat_rand:  lat_rand.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_rand lat_rand.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_rand lat_rand.c  $O/lmbench.a $(LDLIBS)
 
 $O/lat_cmd.s:lat_cmd.c timing.h stats.h bench.h
 $O/lat_cmd:  lat_cmd.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_cmd lat_cmd.c -march=armv7-a -mfpu=neon -mfloat-abi=softfp $O/lmbench.a $(LDLIBS)
+	$(COMPILE) -o $O/lat_cmd lat_cmd.c  $O/lmbench.a $(LDLIBS)
 
