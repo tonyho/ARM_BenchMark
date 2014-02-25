@@ -14,5 +14,5 @@ then	CC=cc
 	done
 fi
 #CC=/home/tonyho/renesas/gcc-linaro-arm-linux-gnueabi-2012.04-20120426_linux/bin/arm-linux-gnueabi-gcc
-CC=/home/hexiongjun/SmartAuto/prebuilt/toolchains/arm-fsl-linux-gnueabi/4.6.2/bin/arm-fsl-linux-gnueabi-gcc
+CC=/work/SmartAuto/prebuilt/toolchains/arm-fsl-linux-gnueabi/4.6.2/bin/arm-fsl-linux-gnueabi-gcc
 echo $CC
